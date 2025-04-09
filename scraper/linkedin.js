@@ -14,12 +14,18 @@ async function scrapeCompanyPeople(companyHandle) {
   console.log(`Scraping profiles from: ${companyHandle}`);
   
   // Launch browser in headless mode
-  const browser = await puppeteer.launch({
+//   const browser = await puppeteer.launch({
+//     headless: true,
+//     args: ['--no-sandbox', '--disable-setuid-sandbox'],
+//     executablePath: '/opt/render/.cache/puppeteer/chrome/linux-*/chrome' || undefined,
+//     defaultViewport: { width: 1280, height: 800 }
+//   });
+const browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    executablePath: '/opt/render/.cache/puppeteer/chrome/linux-*/chrome' || undefined,
     defaultViewport: { width: 1280, height: 800 }
   });
+  
   
   
   const page = await browser.newPage();
