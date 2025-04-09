@@ -15,10 +15,12 @@ async function scrapeCompanyPeople(companyHandle) {
   
   // Launch browser in headless mode
   const browser = await puppeteer.launch({
-    headless: true, // Use basic 'true' for compatibility with all versions
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
     defaultViewport: { width: 1280, height: 800 }
   });
+  
   
   const page = await browser.newPage();
   
