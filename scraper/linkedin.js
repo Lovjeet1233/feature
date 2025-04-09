@@ -20,10 +20,15 @@ async function scrapeCompanyPeople(companyHandle) {
 //     executablePath: '/opt/render/.cache/puppeteer/chrome/linux-*/chrome' || undefined,
 //     defaultViewport: { width: 1280, height: 800 }
 //   });
+// const browser = await puppeteer.launch({
+//     headless: true,
+//     args: ['--no-sandbox', '--disable-setuid-sandbox'],
+//     defaultViewport: { width: 1280, height: 800 }
+//   });
+  
 const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    defaultViewport: { width: 1280, height: 800 }
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   });
   
   
