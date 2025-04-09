@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Company People Scraper</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>LinkedIn Company People Scraper</h1>
+    
+    <div class="search-form">
+      <input type="text" id="companyHandle" placeholder="Enter company LinkedIn handle (e.g., sense7ai)" required>
+      <button id="scrapeButton">Scrape Profiles</button>
+    </div>
+    
+    <div class="status-indicator">
+      <div id="loadingIndicator" class="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>bro!! wait your network will increase soon</p>
+      </div>
+      <p id="statusMessage"></p>
+    </div>
+    
+    <div class="results-container">
+      <div id="resultsStats" class="results-stats"></div>
+      <div id="results" class="results-grid"></div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const companyHandleInput = document.getElementById('companyHandle');
+      const scrapeButton = document.getElementById('scrapeButton');
+      const loadingIndicator = document.getElementById('loadingIndicator');
+      const statusMessage = document.getElementById('statusMessage');
+      const results = document.getElementById('results');
+      const resultsStats = document.getElementById('resultsStats');
+      
+      scrapeButton.addEventListener('click', async () => {
+        const companyHandle = companyHandleInput.value.trim();
+        
+        if (!companyHandle) {
+          statusMessage.textContent = 'Please enter a company handle';
+          statusMessage.className = 'error';
+          return;
+        }
+        
+        // Clear previous results
+        results.innerHTML = '';
+        resultsStats.innerHTML = '';
+        statusMessage.textContent = '';
+        
+        // Show loading indicator
+        loadingIndicator.style.display = 'flex';
+        scrapeButton.disabled = true;
+        
+        try {
+          const response = await fetch('/api/scrape', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ companyHandle }),
+          });
+          
+          const data = await response.json();
+          
+          // Hide loading indicator
+          loadingIndicator.style.display = 'none';
+          scrapeButton.disabled = false;
+          
+          if (!data.success) {
+            statusMessage.textContent = data.message || 'An error occurred during scraping';
+            statusMessage.className = 'error';
+            return;
+          }
+          
+          if (data.data.length === 0) {
+            statusMessage.textContent = 'No profiles found. The company might not have public profiles or LinkedIn structure might have changed.';
+            return;
+          }
+          
+          // Display stats
+          resultsStats.innerHTML = `
+            <h2>Results for ${data.company}</h2>
+            <p>Found ${data.data.length} profiles</p>
+          `;
+          
+          // Display results
+          data.data.forEach(profile => {
+            const profileCard = document.createElement('div');
+            profileCard.className = 'profile-card';
+            
+            profileCard.innerHTML = `
+              <div class="profile-image">
+                <img src="/star.jpg" alt="${profile.profileName}" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
+              </div>
+              <div class="profile-info">
+                <h3 class="profile-name">
+                  <a href="${profile.profileUrl}" target="_blank" rel="noopener noreferrer">
+                    ${profile.profileName}
+                  </a>
+                </h3>
+                <p class="profile-title">${profile.title}</p>
+                <p class="profile-subtitle">${profile.subtitle}</p>
+              </div>
+              <a href="${profile.profileUrl}" class="visit-profile" target="_blank">Visit Profile</a>
+            `;
+            
+            results.appendChild(profileCard);
+          });
+          
+        } catch (error) {
+          console.error('Error:', error);
+          loadingIndicator.style.display = 'none';
+          scrapeButton.disabled = false;
+          statusMessage.textContent = 'An error occurred while connecting to the server';
+          statusMessage.className = 'error';
+          
+        }
+      });
+    });
+  </script>
+</body>
+</html>
