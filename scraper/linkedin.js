@@ -17,7 +17,7 @@ async function scrapeCompanyPeople(companyHandle) {
   const browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+    executablePath: '/opt/render/.cache/puppeteer/chrome/linux-*/chrome' || undefined,
     defaultViewport: { width: 1280, height: 800 }
   });
   
